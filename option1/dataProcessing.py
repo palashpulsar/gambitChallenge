@@ -18,11 +18,10 @@ def readDataFromURL(targetURL):
 	machineData = {}
 	for line in txt:
 		if '-' in line: # That is, this is the date and time field
-			machineData['date'] = line.split(' ')[0]
-			machineData['time'] = line.split(' ')[1].split('\n')[0]
+			datetimestamp = line.split('\n')[0]
 		else:
 			machineData[int(line.split(':')[0])] = int(line.split(':')[1])
-	return machineData
+	return [datetimestamp, machineData]
 
 def variableNames():
 	"""
