@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db import IntegrityError
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from .models import modbusDataTable
 import urllib2
@@ -12,14 +13,20 @@ def modbusDataEntry(request):
 	url = "http://tuftuf.gambitlabs.fi/feed.txt"
 	[datetimestamp, machineData] = readDataFromURL(url)
 	dataEntry = modbusDataTable(datetimestamp=parse_datetime(datetimestamp), dataset=json.dumps(machineData))
-	dataEntry.save()
+	try:
+		dataEntry.save()
+	except IntegrityError:
+		print "Preventing duplicate data to enter our database :)."
 	return HttpResponse("Testing")
 
 def modbusDataEntryAutomate():
 	url = "http://tuftuf.gambitlabs.fi/feed.txt"
 	[datetimestamp, machineData] = readDataFromURL(url)
 	dataEntry = modbusDataTable(datetimestamp=parse_datetime(datetimestamp), dataset=json.dumps(machineData))
-	dataEntry.save()
+	try:
+		dataEntry.save()
+	except IntegrityError:
+		print "Preventing duplicate data to enter our database :)."
 	return
 
 def readDataFromURL(targetURL):
