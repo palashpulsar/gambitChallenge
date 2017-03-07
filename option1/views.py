@@ -15,6 +15,13 @@ def modbusDataEntry(request):
 	dataEntry.save()
 	return HttpResponse("Testing")
 
+def modbusDataEntryAutomate():
+	url = "http://tuftuf.gambitlabs.fi/feed.txt"
+	[datetimestamp, machineData] = readDataFromURL(url)
+	dataEntry = modbusDataTable(datetimestamp=parse_datetime(datetimestamp), dataset=json.dumps(machineData))
+	dataEntry.save()
+	return
+
 def readDataFromURL(targetURL):
 	"""
 	Description:
