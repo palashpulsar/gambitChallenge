@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
-from .models import modbusDataTable
+from .models import modbusDataTable, humanReadableDataTable
 import urllib2
 import json
 from django.utils.dateparse import parse_datetime
+from dataProcessing import variableNames, convert2HumanData
 
 
 # Create your views here.
@@ -17,6 +18,11 @@ def modbusDataEntry(request):
 		dataEntry.save()
 	except IntegrityError:
 		print "Preventing duplicate data to enter our database :)."
+	else:
+		dictVar = variableNames()
+		humanData = convert2HumanData(machineData, dictVar)
+		humanDataEntry = humanReadableDataTable(datetimestamp=parse_datetime(datetimestamp), dataset=json.dumps(humanData))
+		humanDataEntry.save()
 	return HttpResponse("Testing")
 
 def modbusDataEntryAutomate():

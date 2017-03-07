@@ -11,10 +11,10 @@ class modbusDataTable(models.Model):
 		return unicode(self.datetimestamp)
 
 class humanReadableDataTable(models.Model):
-	datetimestamp = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
+	datetimestamp = models.DateTimeField(unique=True)
 	dataset = JSONField()
 	def __unicode__(self):
-		return self.datetimestamp
+		return unicode(self.datetimestamp)
 
 # NOTE:
 # http://stackoverflow.com/questions/9910535/django-coercing-to-unicode-need-string-or-buffer-datetime-date-found
