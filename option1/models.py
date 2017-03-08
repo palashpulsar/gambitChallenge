@@ -15,7 +15,3 @@ class humanReadableDataTable(models.Model):
 	dataset = JSONField()
 	def __unicode__(self):
 		return unicode(self.datetimestamp)
-
-# NOTE:
-# http://stackoverflow.com/questions/9910535/django-coercing-to-unicode-need-string-or-buffer-datetime-date-found
-# https://docs.djangoproject.com/en/dev/ref/utils/#module-django.utils.dateparse
