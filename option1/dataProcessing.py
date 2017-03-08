@@ -1,4 +1,10 @@
 import urllib2
+from django.db import IntegrityError
+from .models import modbusDataTable, humanReadableDataTable
+import json
+from django.utils.dateparse import parse_datetime
+from django.utils.timezone import is_aware, make_aware
+
 
 def readDataFromURL(targetURL):
 	"""
@@ -22,6 +28,26 @@ def readDataFromURL(targetURL):
 		else:
 			machineData[int(line.split(':')[0])] = int(line.split(':')[1])
 	return [datetimestamp, machineData]
+
+def modbusDataEntryAutomate():
+	url = "http://tuftuf.gambitlabs.fi/feed.txt"
+	[datetimestamp, machineData] = readDataFromURL(url)
+	parse_datetimestamp = parse_datetime(datetimestamp)
+	if not is_aware(parse_datetimestamp):
+		parse_datetimestamp = make_aware(parse_datetimestamp)
+	dataEntry = modbusDataTable(datetimestamp=parse_datetimestamp, dataset=json.dumps(machineData))
+	try:
+		dataEntry.save()
+	except IntegrityError:
+		print "Preventing duplicate data to enter our database :)."
+	else:
+		dictVar = variableNames()
+		humanData = convert2HumanData(machineData, dictVar)
+		humanDataEntry = humanReadableDataTable(datetimestamp=parse_datetime(datetimestamp), dataset=json.dumps(humanData))
+		humanDataEntry.save()
+	return
+	# NOTE: http://stackoverflow.com/questions/18622007/runtimewarning-datetimefield-received-a-naive-datetime
+
 
 def variableNames():
 	"""
