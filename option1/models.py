@@ -6,12 +6,8 @@ from django.db import models
 # Create your models here.
 class modbusDataTable(models.Model):
 	datetimestamp = models.DateTimeField(unique=True)
-	dataset = JSONField()
+	machineData = JSONField()
+	humanData = JSONField(null=True)
 	def __unicode__(self):
 		return unicode(self.datetimestamp)
 
-class humanReadableDataTable(models.Model):
-	datetimestamp = models.DateTimeField(unique=True)
-	dataset = JSONField()
-	def __unicode__(self):
-		return unicode(self.datetimestamp)

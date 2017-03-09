@@ -1,25 +1,12 @@
 import urllib2
 from django.db import IntegrityError
-from .models import modbusDataTable, humanReadableDataTable
+from .models import modbusDataTable
 import json
 from django.utils.dateparse import parse_datetime
 from django.utils.timezone import is_aware, make_aware
 
 
 def readDataFromURL(targetURL):
-	"""
-	Description:
-	This function reads the text obtained from 'targetURL'.
-	It parses the text into individual register reading, date as well as time.
-	It returns a dictionary with keys as register number, and values as the corresponding value.
-	The dictionary also includes the date and time.
-	
-	Input:
-	targetURL: The url string from where text file is generated.
-	
-	Output:
-	machineData: A dictionary that comprises the content of registers, as well as date and time.
-	"""
 	txt = urllib2.urlopen(targetURL)
 	machineData = {}
 	for line in txt:
@@ -33,34 +20,25 @@ def modbusDataEntryAutomate():
 	url = "http://tuftuf.gambitlabs.fi/feed.txt"
 	[datetimestamp, machineData] = readDataFromURL(url)
 	parse_datetimestamp = parse_datetime(datetimestamp)
+	dictVar = variableNames()
+	humanData = convert2HumanData(machineData, dictVar)
 	if not is_aware(parse_datetimestamp):
 		parse_datetimestamp = make_aware(parse_datetimestamp)
-	dataEntry = modbusDataTable(datetimestamp=parse_datetimestamp, dataset=json.dumps(machineData))
+	dataEntry = modbusDataTable(datetimestamp = parse_datetimestamp,
+								machineData = json.dumps(machineData),
+								humanData = json.dumps(humanData))
 	try:
 		dataEntry.save()
 	except IntegrityError:
 		print "Preventing duplicate data to enter our database :)."
 	else:
-		dictVar = variableNames()
-		humanData = convert2HumanData(machineData, dictVar)
-		humanDataEntry = humanReadableDataTable(datetimestamp=parse_datetime(datetimestamp), dataset=json.dumps(humanData))
-		humanDataEntry.save()
+		print "New data entered to the server."
 	return
 	# NOTE: http://stackoverflow.com/questions/18622007/runtimewarning-datetimefield-received-a-naive-datetime
 
 
 def variableNames():
-	"""
-	Description:
-	This function map the register number to the variable name.
 	
-	Input:
-	None
-	
-	Output:
-	dictVar: A dictionary that comprises of the register number as key, and the corresponding
-	variable name as value. 
-	"""
 	dictVar =  {1: 'flow rate',
 				3: 'energy flow rate',
 				5: 'velocity',
@@ -112,34 +90,48 @@ def variableNames():
 def convert2HumanData(machineData, dictVar):
 	humanData = {}
 	for key in machineData:
-		if key in [1, 3, 5, 7, 11, 15, 19, 23, 27, 31, 33, 35, 37, 39, 41, 43]:
+		if key in [1, 3, 5, 7, 11, 15, 19, 23, 27, 31, 33, 35, 37, 39, 41, 43,
+					45, 47, 77, 79, 81, 83, 85, 87, 89, 97, 99]:
 			regA = machineData[key]
 			regB = machineData[key+1]
 			humanData[dictVar[key]] = real4Conversion(regA, regB)
-			print "(regA, regB): (%r, %r), %s: %r" %(regA, regB, 
-														dictVar[key], humanData[dictVar[key]])
 		elif key in [9, 13, 17, 21, 25, 29]:
 			regA = machineData[key]
 			regB = machineData[key+1]
 			humanData[dictVar[key]] = longConversion(regA, regB)
-			print "(regA, regB): (%r, %r), %s: %r" %(regA, regB, 
-														dictVar[key], humanData[dictVar[key]])
+		elif key in [49, 51, 53, 56]:
+			if key == 53:
+				humanData[dictVar[key]] = [machineData[key], 
+											machineData[key+1], machineData[key+2]]
+			elif key == 49:
+				humanData[dictVar[key]] = [machineData[key], machineData[key+1]]
+			else:
+				humanData[dictVar[key]] = machineData[key]
+		elif key in [59, 60, 61, 62, 92, 93, 94, 96]:
+			regA = machineData[key]
+			humanData[dictVar[key]] = integerConversion(regA, key)		
+		elif key == 72:
+			humanData[dictVar[key]] = machineData[key]
 	return humanData
 
+def integerConversion(regA, key):
+	if key == 96:
+		if regA == 0:
+			return 'English'
+		elif regA == 1:
+			return 'Chinese'
+		else:
+			return 'Other language'
+
+	elif key == 92:
+		bin_form = format(regA, '016b')
+		workingStepBin = bin_form[0:8]
+		signalQualityBin = bin_form[8:16]
+		return [int(workingStepBin, 2), int(signalQualityBin, 2)]
+	else:
+		return regA
+
 def real4Conversion(regA, regB):
-	"""
-	Description:
-	This function converts REAL4 formatted data to human readable.
-
-	Input:
-	regA and regB: The two register values for a particular variable.
-
-	Output:
-	value: The human readable equivalent of the binary(regB)+binary(regA)
-
-	NOTES:
-	http://stackoverflow.com/questions/16926130/python-convert-to-binary-and-keep-leading-zeros
-	"""
 	bin_form = format(regB, '016b') + format(regA, '016b')
 	bin_form = bin_form[::-1]
 	sign_value = 0.0
@@ -206,3 +198,42 @@ Tasks:
 3. Present it in a nice way
 """
 
+"""
+	Description:
+	This function reads the text obtained from 'targetURL'.
+	It parses the text into individual register reading, date as well as time.
+	It returns a dictionary with keys as register number, and values as the corresponding value.
+	The dictionary also includes the date and time.
+	
+	Input:
+	targetURL: The url string from where text file is generated.
+	
+	Output:
+	machineData: A dictionary that comprises the content of registers, as well as date and time.
+	"""
+
+"""
+	Description:
+	This function map the register number to the variable name.
+	
+	Input:
+	None
+	
+	Output:
+	dictVar: A dictionary that comprises of the register number as key, and the corresponding
+	variable name as value. 
+	"""
+
+"""
+	Description:
+	This function converts REAL4 formatted data to human readable.
+
+	Input:
+	regA and regB: The two register values for a particular variable.
+
+	Output:
+	value: The human readable equivalent of the binary(regB)+binary(regA)
+
+	NOTES:
+	http://stackoverflow.com/questions/16926130/python-convert-to-binary-and-keep-leading-zeros
+	"""
