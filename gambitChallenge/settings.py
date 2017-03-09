@@ -126,12 +126,6 @@ USE_TZ = False
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
-# Extra places for collectstatic to find static files.
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'static'),
-)
-
 # https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/
 # CELERY STUFF
 CELERY_BROKER_URL = 'redis://localhost:6379'
@@ -140,9 +134,3 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Helsinki'
-
-import dj_database_url
-
-# Heroku Database (Link: https://devcenter.heroku.com/articles/django-app-configuration):
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
