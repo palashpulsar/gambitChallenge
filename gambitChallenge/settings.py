@@ -126,6 +126,11 @@ USE_TZ = False
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT, 'static'),
+)
+
 # https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/
 # CELERY STUFF
 CELERY_BROKER_URL = 'redis://localhost:6379'
