@@ -1,0 +1,44 @@
+{% load staticfiles%}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Interface page</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+	<link rel="stylesheet" href="{% static 'option2/css/visualization.css' %}" />
+</head>
+
+<script type="text/javascript">
+	var urlModbus = "{% url 'modbus' %}";
+	var urlHuman = "{% url 'human' %}";
+	var urlModbusType = "{% url 'modbusType' %}";
+	var urlHumanType = "{% url 'humanType' %}";
+</script>
+
+<body>
+	<h1>
+		Visualization
+	</h1>
+	<form>
+		<label>
+			<input type="radio" name="radio-choice-0" id="radio-choice-0a">Modbus' Register Data
+		</label>
+    	<label for="radio-choice-0b">Human Readable Data</label>
+    		<input type="radio" name="radio-choice-0" id="radio-choice-0b" class="custom">
+	</form>
+
+	<form>
+		<div class="ui-field-contain">
+			<label for="select-native-2">Pick your variable:</label>
+			<select id="selector" name="selector" data-mini="true"></select>
+		</div>
+	</form>
+		
+
+
+	<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+	<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+	<script src="{% static 'option2/js/visualization.js' %}"></script>
+</body>
+</html>
