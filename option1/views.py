@@ -33,34 +33,15 @@ def test(request):
 	return JsonResponse(data, safe=False)
 
 
-def redesignDatacollection(request):
-
-	# url = "http://tuftuf.gambitlabs.fi/feed.txt"
-	# [datetimestamp, machineData] = readDataFromURL(url)
-	# parse_datetimestamp = parse_datetime(datetimestamp)
-
-	modelData = modbusDataTable.objects.all()[0]
-	print "timestamp is: ", modelData.datetimestamp
-	machineData = modelData.machineData
-	print "machineData: ", json.loads(machineData)
-	dictVar = variableNames()
-	humanData = convert2HumanData2(machineData, dictVar)
-	print "humanData: ", humanData
-
-	# for key in humanData:
-	# 	if key == 'reynolds number':
-	# 		print humanData[key]
-	# 		for data_key in humanData[key]:
-	# 			print type(data_key), ":", humanData[key][data_key]
-
-	# if not is_aware(parse_datetimestamp):
-	# 	parse_datetimestamp = make_aware(parse_datetimestamp)
-	# dataEntry = modbusDataTable(datetimestamp = parse_datetimestamp,
-	# 							machineData = json.dumps(humanData))
-	# try:
-	# 	dataEntry.save()
-	# except IntegrityError:
-	# 	print "Preventing duplicate data to enter our database :)."
-	# else:
-	# 	print "New data entered to the server."
-	return HttpResponse("Some data collection occuring in background")
+def rearrangeDatabase():
+	print "I am inside rearrangeDatabase"
+	allEntry = modbusDataTable.objects.all().order_by('datetimestamp')
+	obj = allEntry[0]
+	for i in range(len(allEntry)-1):
+		machineData = json.loads(allEntry[i].machineData)
+		machineData = dict([(int(k), v) for k, v in machineData.items()])
+		dictVar = variableNames()
+		humanData = convert2HumanData2(machineData, dictVar)
+		allEntry[i].humanData = json.dumps(humanData)
+		allEntry[i].save()
+	return

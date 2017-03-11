@@ -23,7 +23,6 @@ def modbusDataEntryAutomate():
 	parse_datetimestamp = parse_datetime(datetimestamp)
 	dictVar = variableNames()
 	humanData = convert2HumanData2(machineData, dictVar)
-	print humanData
 	if not is_aware(parse_datetimestamp):
 		parse_datetimestamp = make_aware(parse_datetimestamp)
 	dataEntry = modbusDataTable(datetimestamp = parse_datetimestamp,
@@ -60,10 +59,10 @@ def OldmodbusDataEntryAutomate():
 
 def variableNames():
 	
-	dictVar =  {1: 'flow rate',
-				3: 'energy flow rate',
-				5: 'velocity',
-				7: 'fluid sound speed',
+	dictVar =  {1: 'flow rate (m^3/h)',
+				3: 'energy flow rate (GJ/h)',
+				5: 'velocity (m/s)',
+				7: 'fluid sound speed (m/s)',
 				9: 'positive accumulator',
 				11: 'positive decimal fraction',
 				13: 'negative accumulator',
@@ -76,14 +75,14 @@ def variableNames():
 				27: 'net decimal fraction',
 				29: 'net energy accumulator',
 				31: 'net energy decimal fraction',
-				33: 'temperature inlet',
-				35: 'temperature outlet',
+				33: 'temperature inlet (C)',
+				35: 'temperature outlet (C)',
 				37: 'analog input AI3',
 				39: 'analog input AI4',
 				41: 'analog input AI5',
-				43: 'current input at AI3',
-				45: 'current input at AI3',
-				47: 'current input at AI3',
+				43: 'current input at AI3 (mA)',
+				45: 'current input at AI3 (mA)',
+				47: 'current input at AI3 (mA)',
 				49: 'system passowrd',
 				51: 'password for hardware',
 				53: 'calendar',
@@ -93,13 +92,13 @@ def variableNames():
 				61: 'LCD back-lit lights for number of seconds',
 				62: 'times for the beeper',
 				72: 'error code',
-				77: 'PT100 resistance of inlet',
-				79: 'PT100 resistance of outlet',
-				81: 'total travel time',
-				83: 'delta travel time',
-				85: 'upstream travel time',
-				87: 'downstream travel time',
-				89: 'output current',
+				77: 'PT100 resistance of inlet (Ohm)',
+				79: 'PT100 resistance of outlet (Ohm)',
+				81: 'total travel time (microSecond)',
+				83: 'delta travel time (ninoSecond)',
+				85: 'upstream travel time (microSecond)',
+				87: 'downstream travel time (microSecond)',
+				89: 'output current (mA)',
 				92: 'working step and signal quality',
 				93: 'upstream strength',
 				94: 'downstream strength',
@@ -116,7 +115,7 @@ def convert2HumanData2(machineData, dictVar):
 			regA = machineData[key]
 			regB = machineData[key+1]
 			humanData[dictVar[key]] = {"A": machineData[key], "B": machineData[key+1], 
-										"human": real4Conversion(regA, regB)}
+										"C": None, "human": real4Conversion(regA, regB)}
 		elif key in [9, 13, 17, 21, 25, 29]:
 			regA = machineData[key]
 			regB = machineData[key+1]

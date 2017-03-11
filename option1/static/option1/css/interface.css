@@ -2,3 +2,9 @@ html, body{
 	height: 100%;
 	width: 100%;
 	}
+
+thead {color:green;}
+
+table, th, td {
+    border: 1px solid black;
+}
