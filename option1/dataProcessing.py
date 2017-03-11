@@ -16,7 +16,28 @@ def readDataFromURL(targetURL):
 			machineData[int(line.split(':')[0])] = int(line.split(':')[1])
 	return [datetimestamp, machineData]
 
+
 def modbusDataEntryAutomate():
+	url = "http://tuftuf.gambitlabs.fi/feed.txt"
+	[datetimestamp, machineData] = readDataFromURL(url)
+	parse_datetimestamp = parse_datetime(datetimestamp)
+	dictVar = variableNames()
+	humanData = convert2HumanData2(machineData, dictVar)
+	print humanData
+	if not is_aware(parse_datetimestamp):
+		parse_datetimestamp = make_aware(parse_datetimestamp)
+	dataEntry = modbusDataTable(datetimestamp = parse_datetimestamp,
+								machineData = json.dumps(machineData),
+								humanData = json.dumps(humanData))
+	try:
+		dataEntry.save()
+	except IntegrityError:
+		print "Preventing duplicate data to enter our database :)."
+	else:
+		print "New data entered to the server."
+	return 
+
+def OldmodbusDataEntryAutomate():
 	url = "http://tuftuf.gambitlabs.fi/feed.txt"
 	[datetimestamp, machineData] = readDataFromURL(url)
 	parse_datetimestamp = parse_datetime(datetimestamp)
@@ -86,6 +107,43 @@ def variableNames():
 				97: 'rate of measured travel time ',
 				99: 'reynolds number'}
 	return dictVar
+
+def convert2HumanData2(machineData, dictVar):
+	humanData = {}
+	for key in machineData:
+		if key in [1, 3, 5, 7, 11, 15, 19, 23, 27, 31, 33, 35, 37, 39, 41, 43,
+					45, 47, 77, 79, 81, 83, 85, 87, 89, 97, 99]:
+			regA = machineData[key]
+			regB = machineData[key+1]
+			humanData[dictVar[key]] = {"A": machineData[key], "B": machineData[key+1], 
+										"human": real4Conversion(regA, regB)}
+		elif key in [9, 13, 17, 21, 25, 29]:
+			regA = machineData[key]
+			regB = machineData[key+1]
+			humanData[dictVar[key]] = {"A": machineData[key], "B": machineData[key+1], 
+										"C": None, "human": real4Conversion(regA, regB)}
+		elif key in [49, 51, 53, 56]:
+			if key == 53:
+				humanData[dictVar[key]] = {"A": machineData[key], "B": machineData[key+1], 
+											"C": machineData[key+2], "human": [machineData[key], 
+															machineData[key+1], machineData[key+2]]}
+
+			elif key == 49:
+				humanData[dictVar[key]] = {"A": machineData[key], "B": machineData[key+1], "C": None,
+											"human": [machineData[key], machineData[key+1]]}
+
+			else:
+				humanData[dictVar[key]] = {"A": machineData[key], "B": None,
+											"C": None, "human": machineData[key]}
+		elif key in [59, 60, 61, 62, 92, 93, 94, 96]:
+			regA = machineData[key]
+			humanData[dictVar[key]] = {"A": machineData[key], "B": None,
+										"C": None, "human": integerConversion(regA, key)}
+		elif key == 72:
+			humanData[dictVar[key]] = {"A": machineData[key], "B": None, 
+										"C": None, "human": machineData[key]}
+	return humanData
+
 
 def convert2HumanData(machineData, dictVar):
 	humanData = {}
