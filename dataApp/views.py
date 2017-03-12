@@ -1,11 +1,21 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
-from option1.models import modbusDataTable
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
+from .models import modbusDataTable
 import json
 
+
 # Create your views here.
-def visualization(request):
-	return render(request, 'option2/visualization.html')
+
+"""
+Description:
+	The following function extracts the content of latest entry into database.
+"""
+def latestDataEntry(request):
+	modelData = modbusDataTable.objects.latest('datetimestamp')
+	humanData = json.loads(modelData.humanData)
+	machineData = json.loads(modelData.machineData)
+	datetimestamp = modelData.datetimestamp
+	return JsonResponse(humanData, safe=False)
 
 """
 Description of retrieveVariableList:

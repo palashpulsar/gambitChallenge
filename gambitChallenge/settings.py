@@ -38,8 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'option1',
-    'option2',
+    'dataApp',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +78,7 @@ WSGI_APPLICATION = 'gambitChallenge.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'gambitchallenge',
+        'NAME': 'gambitchallenge2',
         'USER': 'palashsarkar',
         'PASSWORD': 'FinLanD666',
         'HOST': '',

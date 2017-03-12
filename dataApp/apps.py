@@ -3,5 +3,5 @@ from __future__ import unicode_literals
 from django.apps import AppConfig
 
 
-class Option1Config(AppConfig):
-    name = 'option1'
+class DataappConfig(AppConfig):
+    name = 'dataApp'
