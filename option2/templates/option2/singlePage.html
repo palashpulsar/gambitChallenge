@@ -13,10 +13,8 @@
 
 <script>
 	var dataRetrieve = "{% url 'dataConversion'%}";
-	var urlModbus = "{% url 'modbus' %}";
-	var urlHuman = "{% url 'human' %}";
-	var urlModbusType = "{% url 'modbusType' %}";
-	var urlHumanType = "{% url 'humanType' %}";
+	var urlVarList = "{% url 'varliableList' %}";
+	var urlData = "{% url 'data' %}";
 </script>
 
 <body>
@@ -102,6 +100,5 @@
 <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 <script src="{% static 'option1/js/interface.js' %}"></script>
 <script src="{% static 'option2/js/visualization.js' %}"></script>
-<script src="{% static 'option2/js/graph.js' %}"></script>
 </body>
 </html>

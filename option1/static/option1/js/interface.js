@@ -1,33 +1,27 @@
-var variable = [];
-var humanData = [];
-var modbusData = [];
-var backendData;
-
-
 $(document).on("pagecreate", function(event){
     retrieveCurrentDataFromDatabase();
 });
 
+// Making AJAX call to retrieve the latest entry to database.
 function retrieveCurrentDataFromDatabase(){
     console.log("Looking for fresh data in the database for Option1.");
+    var backendData;
 	$.ajax({
 		type: "GET",
         url: dataRetrieve,
         async: false,
         success: function(data){
         	backendData = data;
-        	for (var key in data){
-        		variable.push(key);
-        		humanData.push(data[key].human);
-        	}
         }
 	});
-    displayTabular();
+    displayTabular(backendData);
 };
 
+// AJAX call is made every 5 minutes
 setInterval(retrieveCurrentDataFromDatabase, 5*60*1000); // Every 5 minutes
 
-function displayTabular(){
+// Displaying the lastest entry to database in a tabular form in front end.
+function displayTabular(backendData){
     var tbody = document.getElementById('tbody');
     for (var key in backendData){
         var regVar=[];

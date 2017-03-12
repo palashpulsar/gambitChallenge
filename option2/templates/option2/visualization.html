@@ -11,16 +11,12 @@
 </head>
 
 <script type="text/javascript">
-	var urlModbus = "{% url 'modbus' %}";
-	var urlHuman = "{% url 'human' %}";
-	var urlModbusType = "{% url 'modbusType' %}";
-	var urlHumanType = "{% url 'humanType' %}";
+	var urlVarList = "{% url 'varliableList' %}";
+	var urlData = "{% url 'data' %}";
 </script>
 
 <body>
-	<h1>
-		Visualization
-	</h1>
+	<h1>Visualization</h1>
 	<form>
 		<label>
 			<input type="radio" name="radio-choice-0" id="radio-choice-0a">Modbus' Register Data
@@ -40,11 +36,8 @@
 
 	<div role="main" class="ui-content" id="d3js_Plot"></div>
 		
-
-
 	<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 	<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 	<script src="{% static 'option2/js/visualization.js' %}"></script>
-	<script src="{% static 'option2/js/graph.js' %}"></script>
 </body>
 </html>
