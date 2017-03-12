@@ -45,13 +45,26 @@ def callForModbusData(request):
 		objDict = json.loads(obj.machineData)
 		dataDateTimeStamp.append(obj.datetimestamp)
 		dataReg_id.append(objDict[str(reg_id)])
-	allData = {'datetimestamp': dataDateTimeStamp, 'regId': dataReg_id}
-	print "reg_id: ", reg_id
-	print allData
+	allData = {'datetimestamp': dataDateTimeStamp, 'dataVar': dataReg_id}
 	return JsonResponse(allData, safe=False)
 
 def callForHumanData(request):
 	print "callForHumanData is selected."
-	return HttpResponse("Testing")
+	humanVar = request.GET['humanVar']
+	numElement = 5
+	
+	# Selecting the objects
+	allEntry = modbusDataTable.objects.all().order_by('-datetimestamp')[:numElement]
+	allEntry = reversed(allEntry)
+
+	# Assigning the values corresponding to humanVar and their datetimestamp in a variable
+	dataDateTimeStamp = []
+	dataHumanVar = []
+	for obj in allEntry:
+		objDict = json.loads(obj.humanData)
+		dataDateTimeStamp.append(obj.datetimestamp)
+		dataHumanVar.append(objDict[humanVar]["human"])
+	allData = {'datetimestamp': dataDateTimeStamp, 'dataVar': dataHumanVar}
+	return JsonResponse(allData, safe=False)
 
 

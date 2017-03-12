@@ -1,14 +1,15 @@
 function plotButtonClicked(){
+    console.log("Looking for fresh data in the database for Option2.");
     var select = document.getElementById("selector");
-    console.log(varType);
     varFromDatabaseCalled(select.value)
 }
+
+setInterval(plotButtonClicked, 5*60*1000); // Every 5 minutes
 
 function varFromDatabaseCalled(value){
 	if (varType == 'modbus'){
 		var backendData;
 		url = urlModbus + "?reg_id=" + value;
-		console.log(url);
 		$.ajax({
 			type: "GET",
 			url: url,
@@ -18,8 +19,24 @@ function varFromDatabaseCalled(value){
 			}
 		}); 
 		console.log(backendData);
-		svgPlot(backendData)
+		svgPlot(backendData);
 	}
+    else{
+        if (varType == 'human'){
+            var backendData;
+            url = urlHuman + "?humanVar=" + value;
+            $.ajax({
+                type: "GET",
+                url: url,
+                async:false,
+                success: function(data){
+                    backendData = data;
+                }
+            }); 
+            console.log(backendData);
+            svgPlot(backendData);
+        }
+    }
 }
 
 function svgPlot(backendData){
@@ -52,7 +69,7 @@ function svgPlot(backendData){
 
 	// Get the data
     var dates = backendData.datetimestamp;
-    var regIdData = backendData.regId;
+    var regIdData = backendData.dataVar;
     var Data = [];
     for (var i=0; i<dates.length; i++){
         Data.push({

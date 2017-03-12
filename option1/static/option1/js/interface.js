@@ -3,11 +3,13 @@ var humanData = [];
 var modbusData = [];
 var backendData;
 
-$(document).on("pageinit", function(event){
+
+$(document).on("pagecreate", function(event){
     retrieveCurrentDataFromDatabase();
 });
 
 function retrieveCurrentDataFromDatabase(){
+    console.log("Looking for fresh data in the database for Option1.");
 	$.ajax({
 		type: "GET",
         url: dataRetrieve,
@@ -21,7 +23,9 @@ function retrieveCurrentDataFromDatabase(){
         }
 	});
     displayTabular();
-}
+};
+
+setInterval(retrieveCurrentDataFromDatabase, 5*60*1000); // Every 5 minutes
 
 function displayTabular(){
     var tbody = document.getElementById('tbody');

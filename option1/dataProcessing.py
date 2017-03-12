@@ -103,7 +103,7 @@ def variableNames():
 				93: 'upstream strength',
 				94: 'downstream strength',
 				96: 'language used',
-				97: 'rate of measured travel time ',
+				97: 'rate of measured travel time',
 				99: 'reynolds number'}
 	return dictVar
 

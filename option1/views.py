@@ -14,9 +14,9 @@ import json
 def dataConversion(request):
 	# modelData = modbusDataTable.objects.all()[2]
 	modelData = modbusDataTable.objects.latest('datetimestamp')
-	print "Human Data: \n", type(modelData.humanData)
-	print "Machine Data: \n", type(json.loads(modelData.machineData))
-	print "Date stamp: \n", type(modelData.datetimestamp)
+	# print "Human Data: \n", type(modelData.humanData)
+	# print "Machine Data: \n", type(json.loads(modelData.machineData))
+	# print "Date stamp: \n", type(modelData.datetimestamp)
 	if request.is_ajax():
 		print "AJAX activated."
 		humanData = json.loads(modelData.humanData)

@@ -1,7 +1,7 @@
 var variableList = [];
 var varType;
 
-$(document).on("pageinit", function(event){
+$(document).on("pagecreate", function(event){
     dropDownMenu('nothing selected');
     $("#radio-choice-0a").click(function(){
         varType = "modbus";
