@@ -6,7 +6,7 @@ import json
 # Create your views here.
 
 def test(request):
-	return render(request, 'option2/test.html')
+	return render(request, 'option2/singlePage.html')
 
 def visualization(request):
 	print "Am I here?"

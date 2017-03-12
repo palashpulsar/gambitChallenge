@@ -27,6 +27,7 @@ def dataConversion(request):
 	return render(request, 'option1/interface.html')
 
 def test(request):
+	rearrangeDatabase()
 	modelData = modbusDataTable.objects.latest('datetimestamp')
 	data = json.loads(modelData.machineData)
 	print data
@@ -36,8 +37,7 @@ def test(request):
 def rearrangeDatabase():
 	print "I am inside rearrangeDatabase"
 	allEntry = modbusDataTable.objects.all().order_by('datetimestamp')
-	obj = allEntry[0]
-	for i in range(len(allEntry)-1):
+	for i in range(len(allEntry)):
 		machineData = json.loads(allEntry[i].machineData)
 		machineData = dict([(int(k), v) for k, v in machineData.items()])
 		dictVar = variableNames()

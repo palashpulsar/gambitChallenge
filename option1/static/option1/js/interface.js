@@ -5,7 +5,6 @@ var backendData;
 
 $(document).on("pageinit", function(event){
     retrieveCurrentDataFromDatabase();
-    displayTabular()
 });
 
 function retrieveCurrentDataFromDatabase(){
@@ -21,6 +20,7 @@ function retrieveCurrentDataFromDatabase(){
         	}
         }
 	});
+    displayTabular();
 }
 
 function displayTabular(){
