@@ -37,13 +37,53 @@ pip install requirements.txt
 
 The backend of this application is designed to receive data from Modbus every five minutes, convert the register values into human-readable, and stores the register values and human-readable data in a [PostgreSQL](https://www.postgresql.org) database. Multiple entries of same data is prevented by setting the datetimestamp as a unique field.
 
-Clues provided in the challenge were used to design the data conversion methods. Details of backend, including data conversion, can be found [here](dataApp/dataProcessing.py). Integration of Celery into this application, and performing periodic tasks, are described [here](gambitChallenge/celery.py) and [here](dataApp/tasks.py) respectively.
+Clues provided in the challenge were used to design the data conversion methods. Details of backend, including data conversion, can be found [here](option1/dataProcessing.py). Integration of Celery into this application, and performing periodic tasks, are described [here](gambitChallenge/celery.py) and [here](option1/tasks.py) respectively.
 
-The [views](dataApp/views.py) functions are used for rendering front-end templates, and for sending required data to front-end when AJAX calls are made.
+The views functions, described [here](option1/views.py) and [here](option2/views.py), are used for rendering front-end templates, and for sending required data to front-end when AJAX calls are made.
 
-The [front-end](http://gambit-challenge.herokuapp.com) shows real-time information to users. The task described in Option 1 is shown in a tabular format, whereas tasks for Option 2 is shown in a graphical format. Front-end makes use of periodic AJAX calls to visualise information real-time.
+The [front-end](http://gambit-challenge.herokuapp.com) shows real-time information to users. The task described in Option1 is shown in a tabular format, whereas tasks for Option2 is shown in a graphical format. Front-end makes use of periodic AJAX calls to visualise information real-time.
 
 
-## Code Example WRITE IT ASAP
+## Data Conversion Testing with Clues Provided
 
-Show what the library does as concisely as possible, developers should be able to figure out **how** your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.
+This section validates the datatype conversions to human-readable data. In particular, this section describes real4Conversion(), longConversion() and integerConversion() functions implemented in [dataApp/dataProcessing.py](dataApp/dataProcessing.py). In the demonstration, the functions take inputs of the registers described in [the challenge](https://github.com/gambit-labs/tuf-2000m), and checks if the output from these three functions match with the clue provided:
+```
+To help you on your way with data conversion I will give you a few clues based on the example data above:
+
+Register 21-22, Negative energy accumulator is -56.
+Register 33-34, Temperature #1/inlet is 7.101173400878906.
+Register 92, Signal Quality is 38.
+```
+
+Activating django shell
+```
+$ python manage.py shell
+```
+
+Testing of Real4 datatype conversion to human readable
+```
+>>> from dataApp.dataProcessing import real4Conversion
+>>> reg33 = 15568
+>>> reg34 = 16611
+>>> real4Conversion(reg33, reg34)
+7.101173400878906
+```
+
+Testing of Long datatype conversion to human readable
+```
+>>> from dataApp.dataProcessing import longConversion
+>>> reg21 = 65480
+>>> reg22 = 65535
+>>> longConversion(reg21, reg22)
+-56
+```
+
+Testing of Integer datatype conversion to human readable
+```
+>>> from dataApp.dataProcessing import integerConversion
+>>> reg92 = 806
+>>> key = 92
+>>> integerConversion(reg92, key)
+[3, 38]
+```
+Description of Register number 92 states that the lower byte represents Signal Quality. The integerConversion function returns 38 as the lower byte, which is the value of Signal Quality.
