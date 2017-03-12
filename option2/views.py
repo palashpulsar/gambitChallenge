@@ -29,41 +29,26 @@ def varType_Human(request):
 	return JsonResponse(varList, safe=False)
 
 
-def callForModbusData(request, numElement=5, regNum = 1):
+def callForModbusData(request):
 	print "callForModbusData is selected."
-
-	# Defining what are the keys (the first 100 registers) from the latest entry
-	modelData = modbusDataTable.objects.latest('datetimestamp')
-	modbusData = dict.fromkeys((str(key) for key in json.loads(modelData.machineData)), [])
-	modbusData['datetimestamp'] = []
+	reg_id = request.GET['reg_id']
+	numElement=5
 	
-	# Element limit ?? (ie, number of data for an element that we want to show. Lets start with 5.)
-	numElement = 1
-	
+	# Selecting the objects
 	allEntry = modbusDataTable.objects.all().order_by('-datetimestamp')[:numElement]
 	allEntry = reversed(allEntry)
+
+	# Assigning the values corresponding to reg_id and their datetimestamp in a variable
+	dataDateTimeStamp = []
+	dataReg_id = []
 	for obj in allEntry:
-		dataDict = json.loads(obj.machineData)
-
-		# for key in modbusData:
-		# 	if key == 'datetimestamp':
-		# 		modbusData['datetimestamp'].append(obj.datetimestamp)
-		# 	else:
-		# 		print "key: ", key
-		# 		print "modbusData[key]: ", modbusData[key]
-		# 		print "dataDict[key]: ", dataDict[key]
-		# 		modbusData[key].append(dataDict[key])
-		# 		print "modbusData[key]: ", modbusData[key]
-		# 		print "\n"
-
-		for key in dataDict:
-			print "key: ", key
-			print "dataDict[key]: ", dataDict[key]
-			print "\n"
-		modbusData['datetimestamp'].append(obj.datetimestamp)
-	print modbusData['datetimestamp']
-	print modbusData
-	return HttpResponse("Testing")
+		objDict = json.loads(obj.machineData)
+		dataDateTimeStamp.append(obj.datetimestamp)
+		dataReg_id.append(objDict[str(reg_id)])
+	allData = {'datetimestamp': dataDateTimeStamp, 'regId': dataReg_id}
+	print "reg_id: ", reg_id
+	print allData
+	return JsonResponse(allData, safe=False)
 
 def callForHumanData(request):
 	print "callForHumanData is selected."

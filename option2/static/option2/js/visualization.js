@@ -1,12 +1,15 @@
 var variableList = [];
+var varType;
 
 $(document).on("pageinit", function(event){
     dropDownMenu('nothing selected');
     $("#radio-choice-0a").click(function(){
-        dropDownMenu("modbus");
+        varType = "modbus";
+        dropDownMenu(varType);
     });
     $("#radio-choice-0b").click(function(){
-        dropDownMenu("human");
+        varType = "human";
+        dropDownMenu(varType);
     });
 });
 
@@ -15,7 +18,6 @@ function dropDownMenu(varType){
     select.innerHTML = "";
     var option;
     if (varType == 'modbus'){
-        option = '';
         for (var i=1; i<=100; i++){
             option += '<option value="'+i+'">Register Number '+i+'</option>';
         }
