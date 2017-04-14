@@ -30,7 +30,7 @@ This web application is deployed in [Heroku](http://gambit-challenge.herokuapp.c
 
 All dependencies can be installed using
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Description
